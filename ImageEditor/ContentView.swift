@@ -19,7 +19,7 @@ struct ContentView: View {
                     if let image = layer.image {
                         image
                             .resizable()
-                            .aspectRatio(contentMode: .fit)
+                            .frame(width: layer.originalSize.width, height: layer.originalSize.height)
                             .position(layer.position)
                             .scaleEffect(layer.scale)
                             .gesture(
@@ -63,7 +63,6 @@ struct ContentView: View {
                             return
                         }
                         
-                        // Start file access
                         guard selectedFile.startAccessingSecurityScopedResource() else {
                             print("Cannot access file")
                             return
@@ -81,14 +80,12 @@ struct ContentView: View {
                         
                         DispatchQueue.main.async {
                             let image = Image(nsImage: nsImage)
-                            layerManager.addLayer(image: image)
+                            layerManager.addLayer(image: image, size: nsImage.size)
                         }
                     } catch {
                         print("Error importing file: \(error.localizedDescription)")
                     }
                 }
-
-
                 
                 Button(action: {
                     handlePasteboardImage()
@@ -135,7 +132,7 @@ struct ContentView: View {
         if let imageData = pasteboard.data(forType: .tiff),
            let nsImage = NSImage(data: imageData) {
             let image = Image(nsImage: nsImage)
-            layerManager.addLayer(image: image)
+            layerManager.addLayer(image: image, size: nsImage.size)
         }
     }
 }

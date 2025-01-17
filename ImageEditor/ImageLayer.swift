@@ -3,22 +3,19 @@ import SwiftUI
 struct ImageLayer: Identifiable {
     let id = UUID()
     var image: Image?
-    var position: CGPoint = CGPoint(x: 600, y: 350) // Center of canvas
+    var position: CGPoint = CGPoint(x: 600, y: 350)
     var scale: CGFloat = 1.0
+    var originalSize: CGSize = CGSize(width: 0, height: 0)
 }
 
 class LayerManager: ObservableObject {
-    @Published var layers: [ImageLayer] = [] {
-        didSet {
-            print("Layers updated, count: \(layers.count)")
-        }
-    }
+    @Published var layers: [ImageLayer] = []
     
-    func addLayer(image: Image) {
-        print("Adding new layer")
+    func addLayer(image: Image, size: CGSize) {
         DispatchQueue.main.async {
-            self.layers.append(ImageLayer(image: image))
-            print("Layer added successfully")
+            var layer = ImageLayer(image: image)
+            layer.originalSize = size
+            self.layers.append(layer)
         }
     }
 
